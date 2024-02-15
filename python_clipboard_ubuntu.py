@@ -2,7 +2,7 @@ import time
 import subprocess
 import requests
 import json
-from pynput import keyboard
+import keyboard
 
 URL = "https://zppishnnovduq3jt5cbo2f7vuu0vrfsv.lambda-url.ap-south-1.on.aws"
 PREV_DATA = ""
@@ -26,45 +26,25 @@ def update_global_clipboard(data):
         return True
     return False
 
-def on_press(key):
+def on_press(event):
     global PREV_DATA, URL_DATA
     try:
-        if key.char == 'c' and any([key_mod in pressed_keys for key_mod in (keyboard.Key.ctrl, keyboard.Key.alt)]):
-            local_clipboard = get_clipboard()  
+        if event.name == 'c' and keyboard.is_pressed('ctrl+alt'):
+            local_clipboard = get_clipboard()  # Get local clipboard data
             if update_global_clipboard(local_clipboard):
-                URL_DATA = local_clipboard  
-        elif key.char == 'v' and any([key_mod in pressed_keys for key_mod in (keyboard.Key.ctrl, keyboard.Key.alt)]):
-            remote_clipboard = fetch_clipboard()  
+                URL_DATA = local_clipboard  # Update URL_DATA to match local clipboard
+        elif event.name == 'v' and keyboard.is_pressed('ctrl+alt'):
+            remote_clipboard = fetch_clipboard()  # Fetch clipboard data from server
             if remote_clipboard:
                 PREV_DATA = remote_clipboard
-                set_clipboard(PREV_DATA)  
+                set_clipboard(PREV_DATA)  # Update local clipboard with fetched data
                 URL_DATA = PREV_DATA
     except AttributeError:
         pass
 
-pressed_keys = set()
-
-def on_press_handler(key):
-    global pressed_keys
-    try:
-        if key == keyboard.Key.ctrl or key == keyboard.Key.alt:
-            pressed_keys.add(key)
-    except AttributeError:
-        pass
-
-def on_release_handler(key):
-    global pressed_keys
-    try:
-        if key == keyboard.Key.ctrl or key == keyboard.Key.alt:
-            pressed_keys.remove(key)
-    except AttributeError:
-        pass
-
 def track_key_combination():
-    with keyboard.Listener(on_press=on_press_handler, on_release=on_release_handler) as listener:
-        with keyboard.Listener(on_press=on_press) as listener2:
-            listener.join()
-            listener2.join()
+    keyboard.on_press(on_press)
+    keyboard.wait()
 
 if __name__ == "__main__":
     track_key_combination()
