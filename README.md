@@ -8,15 +8,18 @@ pip install -r requirements.txt
 python python_clipboard.pyw
 ```
 
-## Ubuntu Installation
+## Ubuntu Installation and Usage
 ```
 sudo apt-get install xclip
 ```
+keyboard requires root privilleges and hence needed to be installed as root
+```
+sudo python3 -m pip install keyboard --break-system-packages
+```
 ```
 git clone https://github.com/rohitpatil03/Python_Clipboard.git
-pip install -r requirements-u.txt # may require breaking system package flag set
 cd Python_Clipboard
-python python_clipboard_ubuntu.py
+sudo python3 -u python_clipboard_ubuntu.py
 ```
 
 
