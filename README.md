@@ -12,7 +12,7 @@ python python_clipboard.pyw
 ```
 sudo apt-get install xclip
 ```
-keyboard requires root privilleges and hence needed to be installed as root
+keyboard package requires root privilleges and hence needed to be installed as root
 ```
 sudo python3 -m pip install keyboard --break-system-packages
 ```
