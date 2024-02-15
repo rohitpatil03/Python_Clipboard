@@ -1,2 +1,2 @@
-pynput==1.7.3
+keyboard==0.13.5
 requests==2.26.0
