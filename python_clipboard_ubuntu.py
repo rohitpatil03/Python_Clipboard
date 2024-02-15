@@ -30,14 +30,14 @@ def on_press(key):
     global PREV_DATA, URL_DATA
     try:
         if key.char == 'c' and any([key_mod in pressed_keys for key_mod in (keyboard.Key.ctrl, keyboard.Key.alt)]):
-            local_clipboard = get_clipboard()  # Get local clipboard data
+            local_clipboard = get_clipboard()  
             if update_global_clipboard(local_clipboard):
-                URL_DATA = local_clipboard  # Update URL_DATA to match local clipboard
+                URL_DATA = local_clipboard  
         elif key.char == 'v' and any([key_mod in pressed_keys for key_mod in (keyboard.Key.ctrl, keyboard.Key.alt)]):
-            remote_clipboard = fetch_clipboard()  # Fetch clipboard data from server
+            remote_clipboard = fetch_clipboard()  
             if remote_clipboard:
                 PREV_DATA = remote_clipboard
-                set_clipboard(PREV_DATA)  # Update local clipboard with fetched data
+                set_clipboard(PREV_DATA)  
                 URL_DATA = PREV_DATA
     except AttributeError:
         pass

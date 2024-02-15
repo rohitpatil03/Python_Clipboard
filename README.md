@@ -1,11 +1,22 @@
 # Python_Clipboard
 
-## Installation and Usage
+## Windows Installation and Usage
 ```
 git clone https://github.com/rohitpatil03/Python_Clipboard.git
 cd Python_Clipboard
 pip install -r requirements.txt
 python python_clipboard.pyw
+```
+
+## Ubuntu Installation
+```
+sudo apt-get install xclip
+```
+```
+git clone https://github.com/rohitpatil03/Python_Clipboard.git
+pip install -r requirements-u.txt # may require breaking system package flag set
+cd Python_Clipboard
+python python_clipboard_ubuntu.py
 ```
 
 
