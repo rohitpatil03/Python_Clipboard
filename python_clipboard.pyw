@@ -2,48 +2,62 @@ import keyboard
 import time
 import win32clipboard
 import requests
-import json
+from plyer import notification
 
 URL = "https://zppishnnovduq3jt5cbo2f7vuu0vrfsv.lambda-url.ap-south-1.on.aws"
-PREV_DATA = ""
-URL_DATA = ""
+ICON_URL = r"./clipboard.ico"
 
-def track_key_combination(URL,PREV_DATA, URL_DATA):
-    headers ={'Content-type': 'application/json'}
+def get_clipboard_text():
+    win32clipboard.OpenClipboard()
+    data = win32clipboard.GetClipboardData(win32clipboard.CF_TEXT)
+    win32clipboard.CloseClipboard()
+    return data.decode("utf-8") if data else ""
+
+def set_clipboard_text(text):
+    win32clipboard.OpenClipboard()
+    win32clipboard.EmptyClipboard()
+    win32clipboard.SetClipboardText(text, win32clipboard.CF_TEXT)
+    win32clipboard.CloseClipboard()
+
+def show_notification(title, message):
+    notification.notify(
+        title=title,
+        message=message,
+        timeout=3,
+        app_icon=ICON_URL,
+    )
+
+def sync_clipboard(URL):
+    headers = {'Content-type': 'application/json'}
+    prev_data = ""
 
     while True:
-        
         if keyboard.is_pressed('ctrl+alt+v'):
-            # print("Ctrl+Alt+V pressed")
             response = requests.get(f"{URL}/getText", headers=headers)
             if response.ok:
-                res = response.json()
-                URL_DATA = res.get('body', '')
-                win32clipboard.OpenClipboard()
-                win32clipboard.EmptyClipboard()
-                win32clipboard.SetClipboardText(URL_DATA, win32clipboard.CF_TEXT)
-                win32clipboard.CloseClipboard()
-            # keyboard.press_and_release('ctrl+v')
-        
-        elif keyboard.is_pressed('ctrl+alt+c'):
-            # print("Ctrl+Alt+C pressed")
-            # keyboard.press_and_release('ctrl+c')
-            time.sleep(0.1)
-            win32clipboard.OpenClipboard()
-            data = win32clipboard.GetClipboardData(win32clipboard.CF_TEXT)
-            data = data.decode("utf-8")
-            win32clipboard.CloseClipboard()
+                data = response.json().get('body', '')
+                set_clipboard_text(data)
+                show_notification("Clipboard Sync", "Synced clipboard with server successfully")
+            else:
+                show_notification("Clipboard Sync Failed", "Failed to sync clipboard with server")
 
-            if data != PREV_DATA:
-                
-                PREV_DATA = data
-                response = requests.post(f"{URL}/setText", json={'text':f'{PREV_DATA}'}, headers=headers)
+        elif keyboard.is_pressed('ctrl+alt+c'):
+            time.sleep(0.01)
+            data = get_clipboard_text()
+
+            if data != prev_data:
+                response = requests.post(f"{URL}/setText", json={'text': f'{data}'}, headers=headers)
                 if response.ok:
-                    URL_DATA = PREV_DATA
-        
+                    prev_data = data
+                    show_notification("Clipboard Copy", "Copied clipboard content to server successfully")
+                else:
+                    show_notification("Clipboard Copy Failed", "Failed to copy clipboard content to server")
+
         elif keyboard.is_pressed('ctrl+alt+esc'):
+            show_notification("Program Terminated", "Clipboard sync program terminated successfully")
             exit()
 
-        time.sleep(0.1)
+        time.sleep(0.01)
 
-track_key_combination(URL,PREV_DATA, URL_DATA)
+if __name__ == "__main__":
+    sync_clipboard(URL)
