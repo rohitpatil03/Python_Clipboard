@@ -2,10 +2,10 @@ import keyboard
 import time
 import win32clipboard
 import requests
-from plyer import notification
+from win10toast import ToastNotifier
 
 URL = "https://zppishnnovduq3jt5cbo2f7vuu0vrfsv.lambda-url.ap-south-1.on.aws"
-ICON_URL = r"./clipboard.ico"
+ICON_URL = r"clipboard.ico"
 
 def get_clipboard_text():
     win32clipboard.OpenClipboard()
@@ -20,12 +20,7 @@ def set_clipboard_text(text):
     win32clipboard.CloseClipboard()
 
 def show_notification(title, message):
-    notification.notify(
-        title=title,
-        message=message,
-        timeout=3,
-        app_icon=ICON_URL,
-    )
+    toaster.show_toast(title, message, duration=1, icon_path=ICON_URL, threaded=True)
 
 def sync_clipboard(URL):
     headers = {'Content-type': 'application/json'}
@@ -60,4 +55,5 @@ def sync_clipboard(URL):
         time.sleep(0.01)
 
 if __name__ == "__main__":
+    toaster = ToastNotifier()
     sync_clipboard(URL)
