@@ -1,11 +1,25 @@
 # Python_Clipboard
 
-## Installation and Usage
+## Windows Installation and Usage
 ```
 git clone https://github.com/rohitpatil03/Python_Clipboard.git
 cd Python_Clipboard
 pip install -r requirements.txt
 python python_clipboard.pyw
+```
+
+## Ubuntu Installation and Usage
+```
+sudo apt-get install xclip
+```
+keyboard package requires root privilleges and hence needed to be installed as root
+```
+sudo python3 -m pip install keyboard --break-system-packages
+```
+```
+git clone https://github.com/rohitpatil03/Python_Clipboard.git
+cd Python_Clipboard
+sudo python3 -u python_clipboard_ubuntu.py
 ```
 
 
