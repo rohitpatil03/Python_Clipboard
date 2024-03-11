@@ -3,6 +3,7 @@ import time
 import win32clipboard
 import requests
 from win10toast import ToastNotifier
+import base64
 
 URL = "https://zppishnnovduq3jt5cbo2f7vuu0vrfsv.lambda-url.ap-south-1.on.aws"
 ICON_URL = r"clipboard.ico"
@@ -11,12 +12,13 @@ def get_clipboard_text():
     win32clipboard.OpenClipboard()
     data = win32clipboard.GetClipboardData(win32clipboard.CF_TEXT)
     win32clipboard.CloseClipboard()
-    return data.decode("utf-8") if data else ""
+    return base64.b64encode(data).decode()
 
 def set_clipboard_text(text):
+    data = base64.b64decode(text)
     win32clipboard.OpenClipboard()
     win32clipboard.EmptyClipboard()
-    win32clipboard.SetClipboardText(text, win32clipboard.CF_TEXT)
+    win32clipboard.SetClipboardText(data, win32clipboard.CF_TEXT)
     win32clipboard.CloseClipboard()
 
 def show_notification(title, message):
@@ -41,7 +43,7 @@ def sync_clipboard(URL):
             data = get_clipboard_text()
 
             if data != prev_data:
-                response = requests.post(f"{URL}/setText", json={'text': f'{data}'}, headers=headers)
+                response = requests.post(f"{URL}/setText", json={'text': data}, headers=headers)
                 if response.ok:
                     prev_data = data
                     show_notification("Clipboard Copy", "Copied clipboard content to server successfully")
