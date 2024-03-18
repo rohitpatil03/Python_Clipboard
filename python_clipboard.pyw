@@ -50,6 +50,27 @@ def sync_clipboard(URL):
                 else:
                     show_notification("Clipboard Copy Failed", "Failed to copy clipboard content to server")
 
+        # elif keyboard.is_pressed('ctrl+alt+m'):
+        #     time.sleep(0.01)
+        #     data = get_clipboard_text()
+
+        #     if data != prev_data:
+        #         response = requests.post(f"{URL}/setPermanentData", json={'text': data}, headers=headers)
+        #         if response.ok:
+        #             prev_data = data
+        #             show_notification("Clipboard Copy", "Copied clipboard content to server successfully")
+        #         else:
+        #             show_notification("Clipboard Copy Failed", "Failed to copy clipboard content to server")
+        
+        elif keyboard.is_pressed('ctrl+alt+n'):
+            response = requests.get(f"{URL}/getPermanentData", headers=headers)
+            if response.ok:
+                data = response.json().get('body', '')
+                set_clipboard_text(data)
+                show_notification("Clipboard Sync", "Synced clipboard with server successfully")
+            else:
+                show_notification("Clipboard Sync Failed", "Failed to sync clipboard with server")
+
         elif keyboard.is_pressed('ctrl+alt+esc'):
             show_notification("Program Terminated", "Clipboard sync program terminated successfully")
             exit()
